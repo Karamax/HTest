@@ -1,6 +1,6 @@
 import random
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-updater = Updater(token='529659050:AAHurAaKFXlywJK4EBQ4J0x0EwsezX-rt8o') # Токен API к Telegram
+updater = Updater(token='565214317:AAEVUNqiyj1icAX0VUp4Lz4MWzrXTFxh0dA') # Токен API к Telegram
 dispatcher = updater.dispatcher
 # Обработка команд
 def randm():
