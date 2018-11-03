@@ -12,7 +12,6 @@ url_button = types.InlineKeyboardButton(text="URL", url="https://ya.ru")
 callback_button = types.InlineKeyboardButton(text="Callback", callback_data="test")
 switch_button = types.InlineKeyboardButton(text="Switch", switch_inline_query="Telegram")
 keyboard.add(url_button, callback_button, switch_button)
-bot.send_message(message.chat.id, "Я – сообщение из обычного режима", reply_markup=keyboard)
 
 
 
