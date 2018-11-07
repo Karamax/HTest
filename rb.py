@@ -1,52 +1,36 @@
-# -*- coding: utf-8 -*-
-
-import telebot
-from telebot import types
-
-bot = telebot.TeleBot("529659050:AAHurAaKFXlywJK4EBQ4J0x0EwsezX-rt8o")
-
-
-@bot.message_handler(content_types=["text"])
-def any_msg(message):
-    # Создаем клавиатуру и каждую из кнопок (по 2 в ряд)
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
-    url_button = types.InlineKeyboardButton(text="URL", url="https://ya.ru")
-    callback_button = types.InlineKeyboardButton(text="Callback", callback_data="test")
-    print(callback_data)
-    switch_button = types.InlineKeyboardButton(text="Switch", switch_inline_query="Telegram")
-    keyboard.add(url_button, callback_button, switch_button)
-    bot.send_message(message.chat.id, "Я – сообщение из обычного режима", reply_markup=keyboard)
-
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call):
-    # Если сообщение из чата с ботом
-    if call.message:
-        if call.data == "test":
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Пыщь")
-            # Уведомление в верхней части экрана
-            bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Пыщь!")
-    # Если сообщение из инлайн-режима
-    elif call.inline_message_id:
-        if call.data == "test":
-            bot.edit_message_text(inline_message_id=call.inline_message_id, text="Бдыщь")
-
-
-# Простейший инлайн-хэндлер для ненулевых запросов
-@bot.inline_handler(lambda query: len(query.query) > 0)
-def query_text(query):
-    kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text="Нажми меня", callback_data="test"))
-    results = []
-    # Обратите внимание: вместо текста - объект input_message_content c текстом!
-    single_msg = types.InlineQueryResultArticle(
-        id="1", title="Press me",
-        input_message_content=types.InputTextMessageContent(message_text="Я – сообщение из инлайн-режима"),
-        reply_markup=kb
-    )
-    results.append(single_msg)
-    bot.answer_inline_query(query.id, results)
-
-
-if __name__ == '__main__':
-    bot.polling(none_stop=True)
+import random
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+updater = Updater(token='529659050:AAHurAaKFXlywJK4EBQ4J0x0EwsezX-rt8o') # Токен API к Telegram
+dispatcher = updater.dispatcher
+# Обработка команд
+def randm():
+    msg=random.choice(['Учёный','Больной','Пикачу','Кот','Никто','Террорист','Сантехник','Динозавр','Мама','Менеджер'])
+    msg=msg+' приходит '
+    msg=msg+random.choice(['в офис','в небытие','в больницу','драться','в лабораторию','на вызов','в парк Юрского периода','на родительское собрание','к кошке','в метро'])
+    msg=msg+' и говорит '+'"'
+    msg=msg+random.choice(['Какой серьёзный затор.','Возьмите меня есть туристов.','Аллах Акбар!','Я увольняюсь.','Я мама Вовочки.','Давай заведём кота.','У меня болит голова.','Мысленно "Привет, Ничто."','Пика-пика!','Я совершил открытие!'])
+    msg=msg+'" '+'A '
+    msg=msg+random.choice(['Бульбазавр на это','а начальник ему','а из трубы голос','в ответ слышит','учёное сообщество:','тут по громкоговорителю','доктор ему','Небытие ему в ответ','учительница:','кошка отвечает'])
+    msg=msg+' "'
+    msg=msg+random.choice(['Ты не Пикачу, ты сантехник.','Я не доктор, я динозавр.','Давай лучше мышат.','Привет, ничтожество.','Следующая станция бесконечная.','Вы не мама, вы папа.','Нам такие не нужны.','Ты же на пенсию вышел.','Ты новый Энштейн!','Ну хочешь шутку расскажу.'])
+    msg=msg+' "'
+    msg=msg+random.choice([' ))))',' И немедленно выпил.',' С тех пор это закон.',' Так появилась вселенная.',' Вот и сказочке конец.',' И все стали танцевать.',' Держите зачётку.',' Динозавр всё-равно съел туристов.',' И уехали в Казахстан.',' Энтропия нарастала.'])
+    msg='История № '+str(random.randint(1,37525)+random.random()) +': '+ msg
+    print(msg)
+    random.seed()
+    return(msg)
+ def startCommand(bot, update):
+    bot.send_message(chat_id=update.message.chat_id, text='Привет, хочешь офигительных историй? Их есть у меня!')
+def textMessage(bot, update):
+    response = randm()
+    bot.send_message(chat_id=update.message.chat_id, text=response)
+# Хендлеры
+start_command_handler = CommandHandler('start', startCommand)
+text_message_handler = MessageHandler(Filters.text, textMessage)
+# Добавляем хендлеры в диспетчер
+dispatcher.add_handler(start_command_handler)
+dispatcher.add_handler(text_message_handler)
+# Начинаем поиск обновлений
+updater.start_polling(clean=True)
+# Останавливаем бота, если были нажаты Ctrl + C
+updater.idle()
